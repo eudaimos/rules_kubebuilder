@@ -26,7 +26,7 @@ def _deepcopy_gen_action(ctx, outputs):
     
     inputDirs = depset([])
     for srcFile in ctx.files.srcs:
-        inputDirs = inputDirs | [srcFile.dirname]
+        inputDirs = inputDirs | depset([srcFile.dirname])
 
     cmd = """
           source <($PWD/{godir}/go env) &&
