@@ -15,6 +15,7 @@ pkg_tar(
         "//controller-gen:release",
         "//kubebuilder:release",
         "//kustomize:release",
+        "//deepcopy-gen:release",
     ],
 )
 
