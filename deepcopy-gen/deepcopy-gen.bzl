@@ -25,7 +25,7 @@ def _deepcopy_gen_action(ctx, outputs):
         gopath = "$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath
         # gopath = "export GOPATH=$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath + " &&"
     
-    inputDirs = depset([s.dirname for s in ctx.files.srcs])
+    # inputDirs = depset([s.dirname for s in ctx.files.srcs])
     
     cmd = """
           source <($PWD/{godir}/go env) &&
@@ -38,13 +38,13 @@ def _deepcopy_gen_action(ctx, outputs):
         godir = go_ctx.go.path[:-1 - len(go_ctx.go.basename)],
         gopath = gopath,
         cmd = "$(pwd)/" + cg_info.deepcopy_gen_bin.path,
-        args = "-O {outfilebase} -i {files}".format(
+        args = "-O {outfilebase} -i .".format(
             outfilebase = ctx.attr.outputFileBase,
-            files = ",".join(["$(pwd)/" + i + '/...' for i in inputDirs.to_list()]),
+            # files = ",".join([i + '/...' for i in inputDirs.to_list()]),
         ),
     )
     ctx.actions.run_shell(
-        mnemonic = "DeepcopyGen",
+        mnemonic = "DeepCopyGen",
         outputs = outputs,
         inputs = _inputs(ctx, go_ctx),
         env = _env(),
