@@ -73,7 +73,7 @@ def _deepcopy_gen_impl(ctx):
     outputFileName = ctx.attr.outputFileBase + ".go"
     output = ctx.actions.declare_file(outputFileName)
 
-    _deepcopy_gen_action(ctx, [output], output.dirname)
+    _deepcopy_gen_action(ctx, [output])
 
     return DefaultInfo(
         files = depset([output]),
