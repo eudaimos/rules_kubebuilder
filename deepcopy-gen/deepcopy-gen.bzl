@@ -97,7 +97,7 @@ COMMON_ATTRS = {
     ),
 }
 
-def _extra_args():
+def _extra_attrs():
     ret = COMMON_ATTRS
     ret.update({
         "outputFileBase": attr.string(
@@ -117,7 +117,7 @@ def _toolchains():
 
 _deepcopy_gen = rule(
     implementation = _deepcopy_gen_impl,
-    attrs = COMMON_ATTRS,
+    attrs = _extra_attrs(),
     toolchains = _toolchains(),
     doc = "Run the code generation part of deepcopy-gen. " +
           "You can use the name of this rule as part of the `srcs` attribute " +
