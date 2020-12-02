@@ -1,0 +1,70 @@
+load("@rules_kubebuilder//deepcopy-gen:deepcopy-gen-toolchain.bzl", "deepcopy_gen_toolchain")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+exports_files(
+    [
+        "bin/deepcopy-gen.linux",
+        "bin/deepcopy-gen.darwin",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob([
+        "*.bzl",
+        "**/*.bzl",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+pkg_tar(
+    name = "release-bin",
+    srcs = glob(["bin/*"]),
+    package_dir = "/bin",
+)
+
+pkg_tar(
+    name = "release",
+    srcs = [
+        "BUILD.bazel",
+        ":srcs",
+    ],
+    package_dir = "deepcopy-gen",
+    visibility = ["//visibility:public"],
+    deps = [":release-bin"],
+)
+
+toolchain_type(name = "toolchain")
+
+deepcopy_gen_toolchain(
+    name = "deepcopy_gen_linux",
+    deepcopy_gen_bin = "@rules_kubebuilder//deepcopy-gen:bin/deepcopy-gen.linux",
+)
+
+deepcopy_gen_toolchain(
+    name = "deepcopy_gen_darwin",
+    deepcopy_gen_bin = "@rules_kubebuilder//deepcopy-gen:bin/deepcopy-gen.darwin",
+)
+
+toolchain(
+    name = "deepcopy_gen_linux_toolchain",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = ":deepcopy_gen_linux",
+    toolchain_type = ":toolchain",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "deepcopy_gen_darwin_toolchain",
+    exec_compatible_with = [
+        "@platforms//os:osx",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = ":deepcopy_gen_darwin",
+    toolchain_type = ":toolchain",
+    visibility = ["//visibility:public"],
+)
