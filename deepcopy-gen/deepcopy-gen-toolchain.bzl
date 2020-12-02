@@ -8,7 +8,7 @@ DeepCopyGenInfo = provider(
 
 def _deepcopy_gen_toolchain_impl(ctx):
     toolchain_info = platform_common.ToolchainInfo(
-        deepcopy_gen_info = DeepcopyGenInfo(
+        deepcopy_gen_info = DeepCopyGenInfo(
             deepcopy_gen_bin = ctx.file.deepcopy_gen_bin,
         ),
     )
