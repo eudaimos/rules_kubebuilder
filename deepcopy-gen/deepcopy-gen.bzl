@@ -22,14 +22,15 @@ def _deepcopy_gen_action(ctx, outputs):
     outputFileBase = ctx.attr.outputFileBase
     gopath = ""
     if ctx.attr.gopath_dep:
-        gopath = "export GOPATH=$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath + " &&"
+        gopath = "$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath
+        # gopath = "export GOPATH=$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath + " &&"
     
     inputDirs = depset([s.dirname for s in ctx.files.srcs])
     
     cmd = """
           source <($PWD/{godir}/go env) &&
           export PATH=$GOROOT/bin:$PWD/{godir}:$PATH &&
-          {gopath}
+          export GOPATH={gopath} &&
           mkdir -p .gocache &&
           export GOCACHE=$PWD/.gocache &&
           {cmd} {args}
@@ -39,7 +40,7 @@ def _deepcopy_gen_action(ctx, outputs):
         cmd = "$(pwd)/" + cg_info.deepcopy_gen_bin.path,
         args = "-O {outfilebase} -i {files}".format(
             outfilebase = ctx.attr.outputFileBase,
-            files = ",".join([i + '/...' for i in inputDirs.to_list()]),
+            files = ",".join(["$(pwd)/" + i + '/...' for i in inputDirs.to_list()]),
         ),
     )
     ctx.actions.run_shell(
