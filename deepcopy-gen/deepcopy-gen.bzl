@@ -22,12 +22,12 @@ def _deepcopy_gen_action(ctx, outputs):
     outputFileBase = ctx.attr.outputFileBase
     gopath = ""
     if ctx.attr.gopath_dep:
-        gopath = "$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath
+        gopath = "export GOPATH=$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath + " &&"
     
     cmd = """
           source <($PWD/{godir}/go env) &&
           export PATH=$GOROOT/bin:$PWD/{godir}:$PATH &&
-          export GOPATH={gopath} &&
+          {gopath}
           mkdir -p .gocache &&
           export GOCACHE=$PWD/.gocache &&
           {cmd} {args}
