@@ -37,9 +37,12 @@ def _deepcopy_gen_action(ctx, outputs):
         godir = go_ctx.go.path[:-1 - len(go_ctx.go.basename)],
         gopath = gopath,
         cmd = "$(pwd)/" + cg_info.deepcopy_gen_bin.path,
-        args = "-O {outfilebase} -i {files}".format(
-            files = ",".join(inputDirs.to_list()),
-            outfilebase = ctx.attr.outputFileBase
+        # args = "-O {outfilebase} -i {files}".format(
+        #     files = ",".join(inputDirs.to_list()),
+        #     outfilebase = ctx.attr.outputFileBase,
+        # ),
+        args = "-O {outfilebase} -i ./...".format(
+            outfilebase = ctx.attr.outputFileBase,
         ),
     )
     ctx.actions.run_shell(
