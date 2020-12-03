@@ -49,7 +49,7 @@ def _deepcopy_gen_action(ctx, outputs):
         args = "-O {outfilebase} -i {files} -h {headerFile}".format(
             outfilebase = ctx.attr.outputFileBase,
             files = ",".join(["./" + i + "/..." for i in inputDirs.to_list()]),
-            headerFile = headerTxt.path,
+            headerFile = headerTxt.short_path,
         ),
     )
     ctx.actions.run_shell(
