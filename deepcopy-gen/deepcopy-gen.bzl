@@ -30,7 +30,7 @@ def _deepcopy_gen_action(ctx, outputs):
     
     inputDirs = depset([s.dirname for s in ctx.files.srcs])
 
-    headerTxt = ctx.files.goHeaderFile
+    headerTxt = ctx.file.goHeaderFile
     if not headerTxt:
         headerTxt = ctx.actions.declare_file("hack/boilerplate.go.txt")
         ctx.actions.write(output = headerTxt, content = "")
@@ -113,9 +113,9 @@ def _extra_attrs():
             doc = "Base name (without .go suffix) for output files. (default \"zz_deepcopy.generated\")"
         ),
         "goHeaderFile": attr.label(
-            allow_empty = False,
-            allow_files = True,
+            allow_single_file = True,
             mandatory = False,
+            default = "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt",
             doc = "File containing boilerplate header text. The string YEAR will be replaced with the current 4-digit year. (default \"k8s.io/code-generator/hack/boilerplate.go.txt\")",
         ),
     })
