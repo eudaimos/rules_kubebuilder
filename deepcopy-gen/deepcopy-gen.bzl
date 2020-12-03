@@ -49,13 +49,13 @@ def _deepcopy_gen_action(ctx, outputs):
         args = "-O {outfilebase} -i {files} -h {headerFile}".format(
             outfilebase = ctx.attr.outputFileBase,
             files = ",".join(["./" + i + "/..." for i in inputDirs.to_list()]),
-            headerFile = "./" + headerTxt.short_path,
+            headerFile = headerTxt.path,
         ),
     )
     ctx.actions.run_shell(
         mnemonic = "DeepCopyGen",
         outputs = outputs,
-        inputs = _inputs(ctx, go_ctx),
+        inputs = _inputs(ctx, go_ctx, headerTxt),
         env = _env(),
         command = cmd,
         tools = [
@@ -64,8 +64,8 @@ def _deepcopy_gen_action(ctx, outputs):
         ],
     )
 
-def _inputs(ctx, go_ctx):
-    inputs = (ctx.files.srcs + go_ctx.sdk.srcs + go_ctx.sdk.tools +
+def _inputs(ctx, go_ctx, headerFile):
+    inputs = (ctx.files.srcs + [headerFile] + go_ctx.sdk.srcs + go_ctx.sdk.tools +
               go_ctx.sdk.headers + go_ctx.stdlib.libs)
 
     if ctx.attr.gopath_dep:
@@ -115,7 +115,7 @@ def _extra_attrs():
         "goHeaderFile": attr.label(
             allow_single_file = True,
             mandatory = False,
-            # default = "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt",
+            default = "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt",
             doc = "File containing boilerplate header text. The string YEAR will be replaced with the current 4-digit year. (default \"k8s.io/code-generator/hack/boilerplate.go.txt\")",
         ),
     })
