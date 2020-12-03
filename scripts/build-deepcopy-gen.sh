@@ -24,5 +24,8 @@ mv deepcopy-gen "$DEST/deepcopy-gen.darwin"
 GOOS=linux GOARCH=amd64 go build ./cmd/deepcopy-gen
 mv deepcopy-gen "$DEST/deepcopy-gen.linux"
 
+mkdir -p "$ROOT/deepcopy-gen/hack"
+cp ./hack/boilerplate.go.txt $ROOT/deepcopy-gen/hack/
+
 echo "Binaries built:"
 file "$DEST"/*

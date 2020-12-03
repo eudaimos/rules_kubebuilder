@@ -4,6 +4,9 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_context", "go_path")
 load("@io_bazel_rules_go//go/private:providers.bzl", "GoPath")
 
+# refer to default boilerplate?
+# "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt"
+
 def _deepcopy_gen_action(ctx, outputs):
     """ Run deepcopy-gen in the sandbox.
 
@@ -26,7 +29,12 @@ def _deepcopy_gen_action(ctx, outputs):
         # gopath = "export GOPATH=$(pwd)/" + ctx.bin_dir.path + "/" + ctx.attr.gopath_dep[GoPath].gopath + " &&"
     
     inputDirs = depset([s.dirname for s in ctx.files.srcs])
-    
+
+    headerTxt = ctx.files.goHeaderFile
+    if not headerTxt:
+        headerTxt = ctx.actions.declare_file("hack/boilerplate.go.txt")
+        ctx.actions.write(output = headerTxt, content = "")
+
     cmd = """
           source <($PWD/{godir}/go env) &&
           export PATH=$GOROOT/bin:$PWD/{godir}:$PATH &&
@@ -38,9 +46,10 @@ def _deepcopy_gen_action(ctx, outputs):
         godir = go_ctx.go.path[:-1 - len(go_ctx.go.basename)],
         gopath = gopath,
         cmd = "$(pwd)/" + cg_info.deepcopy_gen_bin.path,
-        args = "-O {outfilebase} -i {files}".format(
+        args = "-O {outfilebase} -i {files} -h {headerFile}".format(
             outfilebase = ctx.attr.outputFileBase,
             files = ",".join(["./" + i + "/..." for i in inputDirs.to_list()]),
+            headerFile = headerTxt.path,
         ),
     )
     ctx.actions.run_shell(
@@ -103,8 +112,12 @@ def _extra_attrs():
             default = "zz_generated.deepcopy",
             doc = "Base name (without .go suffix) for output files. (default \"zz_deepcopy.generated\")"
         ),
-        # "goHeaderFile": attr.string(
-        # ),
+        "goHeaderFile": attr.label(
+            allow_empty = False,
+            allow_files = True,
+            mandatory = False,
+            doc = "File containing boilerplate header text. The string YEAR will be replaced with the current 4-digit year. (default \"k8s.io/code-generator/hack/boilerplate.go.txt\")",
+        ),
     })
     return ret
 

@@ -18,6 +18,13 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+exports_files(
+    [
+        "hack/boilerplate.go.txt",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 pkg_tar(
     name = "release-bin",
     srcs = glob(["bin/*"]),
