@@ -115,7 +115,7 @@ def _extra_attrs():
         "goHeaderFile": attr.label(
             allow_single_file = True,
             mandatory = False,
-            default = "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt",
+            # default = "@rules_kubebuilder//deepcopy-gen:hack/boilerplate.go.txt",
             doc = "File containing boilerplate header text. The string YEAR will be replaced with the current 4-digit year. (default \"k8s.io/code-generator/hack/boilerplate.go.txt\")",
         ),
     })
